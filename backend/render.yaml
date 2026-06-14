@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: va-tool-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: CEREBRAS_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        value: sqlite:///./va_tool.db
