@@ -1,17 +1,24 @@
 import json
 import numpy as np
 import faiss
-from sentence_transformers import SentenceTransformer
 from sqlalchemy.orm import Session
 from app.models.note import Note
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+_model = None
+
+def get_model():
+    global _model
+    if _model is None:
+        from sentence_transformers import SentenceTransformer
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _model
 
 def embed_text(text: str) -> list:
-    return model.encode([text])[0].tolist()
+    return get_model().encode([text])[0].tolist()
 
 def save_note(db: Session, client_name: str, content: str):
     embedding = embed_text(content)
+    from app.models.note import Note
     note = Note(
         client_name=client_name,
         content=content,
